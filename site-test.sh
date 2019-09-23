@@ -39,11 +39,13 @@ ddev-live create site drupal ${SITENAME} --github-repo=${GITHUB_REPO} --run-comp
 
 ./wait_site_healthy.sh ${SITENAME}
 echo -ne '\007' >&2
+echo
 
-ddev-live describe ${SITENAME} | grep -v "Using org" | jq -r .status.conditions
-sleep 5
+ddev-live describe site ${SITENAME} | grep -v "Using org" | jq -r .status
+sleep 20
 ddev-live push db ${SITENAME} assets/${SITE_BASENAME}.sql.gz
 pushd assets/${SITE_BASENAME}
 ddev-live push files ${SITENAME} .
 popd
 
+ddev-live exec ${SITENAME} -- drush uli -l
