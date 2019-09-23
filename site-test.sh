@@ -46,7 +46,7 @@ url=$(ddev-live describe site ${SITENAME} | grep -v "Using org" | jq -r .status.
 ./wait_curl_healthy.sh $url
 
 pushd assets/${SITE_BASENAME}
-ddev-live push files ${SITENAME} .
+ddev-live push files ${SITENAME} . >/dev/null
 popd
 
 ddev-live push db ${SITENAME} assets/${SITE_BASENAME}.sql.gz
