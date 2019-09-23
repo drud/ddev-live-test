@@ -42,10 +42,15 @@ echo -ne '\007' >&2
 echo
 
 ddev-live describe site ${SITENAME} | grep -v "Using org" | jq -r .status
-sleep 20
-ddev-live push db ${SITENAME} assets/${SITE_BASENAME}.sql.gz
+url=$(ddev-live describe site ${SITENAME} | grep -v "Using org" | jq -r .status.webStatus.urls[0])
+./wait_curl_healthy.sh $url
+
 pushd assets/${SITE_BASENAME}
 ddev-live push files ${SITENAME} .
 popd
 
-ddev-live exec ${SITENAME} -- drush uli -l
+ddev-live push db ${SITENAME} assets/${SITE_BASENAME}.sql.gz
+
+ddev-live exec ${SITENAME} -- drush uli
+
+# Add curls here to wait for it to come up and check some content.
