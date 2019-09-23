@@ -21,8 +21,8 @@ set -x
 #GITHUB_REPO=rfay/d8composer
 #SITENAME="d8composer-test-$(date +%Y%m%d%H%M%S)"
 GITHUB_REPO=rfay/d8composer
-SITE_BASENAME=d8composer
-SITENAME="${SITE_BASENAME}-$(date +%Y%m%d%H%M%S)"
+SITE_BASENAME=d8c
+SITENAME="${SITE_BASENAME}-$(date +%Y%m%d%H%M)"
 
 function cleanup {
     set +x
@@ -40,6 +40,8 @@ ddev-live create site drupal ${SITENAME} --github-repo=${GITHUB_REPO} --run-comp
 ./wait_site_healthy.sh ${SITENAME}
 echo -ne '\007' >&2
 
+ddev-live describe ${SITENAME} | grep -v "Using org" | jq -r .status.conditions
+sleep 5
 ddev-live push db ${SITENAME} assets/${SITE_BASENAME}.sql.gz
 pushd assets/${SITE_BASENAME}
 ddev-live push files ${SITENAME} .
