@@ -23,6 +23,7 @@ set -x
 GITHUB_REPO=rfay/d8composer
 SITE_BASENAME=d8c
 SITENAME="${SITE_BASENAME}-$(date +%Y%m%d%H%M)"
+DEFAULT_ORG=randy
 
 function cleanup {
     set +x
@@ -32,6 +33,8 @@ function cleanup {
 trap cleanup EXIT
 
 # Consider downloading and installing latest ddev-live-client and using it.
+
+ddev-live auth --token=$(jq -r .apiKey ~/.ddev-live/cli-cnfig.json) --default-org=${DEFAULT_ORG}
 
 echo "Creating site ${SITENAME}"
 ddev-live create site drupal ${SITENAME} --github-repo=${GITHUB_REPO} --run-composer-install --docroot web
@@ -53,4 +56,6 @@ ddev-live push db ${SITENAME} assets/${SITE_BASENAME}.sql.gz
 
 ddev-live exec ${SITENAME} -- drush uli
 
+echo "It all seems to have worked out OK"
+#ddev-live delete site ${SITENAME}
 # Add curls here to wait for it to come up and check some content.
