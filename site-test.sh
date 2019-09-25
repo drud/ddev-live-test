@@ -34,7 +34,7 @@ trap cleanup EXIT
 
 # Consider downloading and installing latest ddev-live-client and using it.
 
-ddev-live auth --token=$(jq -r .apiKey ~/.ddev-live/cli-cnfig.json) --default-org=${DEFAULT_ORG}
+ddev-live auth --default-org=${DEFAULT_ORG}
 
 echo "Creating site ${SITENAME}"
 ddev-live create site drupal ${SITENAME} --github-repo=${GITHUB_REPO} --run-composer-install --docroot web
