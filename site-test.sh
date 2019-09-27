@@ -18,7 +18,7 @@ set -o nounset
 
 # We'll want to add args later, but for now static configuration
 GITHUB_REPO=rfay/d8composer
-SITE_BASENAME=d8c
+SITE_BASENAME=d8composer
 SITENAME="${SITE_BASENAME}-$(date +%Y%m%d%H%M)"
 DEFAULT_ORG=randy
 
