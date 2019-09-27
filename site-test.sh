@@ -18,8 +18,6 @@ set -o nounset
 set -x
 
 # We'll want to add args later, but for now static configuration
-#GITHUB_REPO=rfay/d8composer
-#SITENAME="d8composer-test-$(date +%Y%m%d%H%M%S)"
 GITHUB_REPO=rfay/d8composer
 SITE_BASENAME=d8c
 SITENAME="${SITE_BASENAME}-$(date +%Y%m%d%H%M)"
@@ -31,30 +29,36 @@ function cleanup {
     #ddev-live delete site ${SITENAME}
 }
 trap cleanup EXIT
-
+function elapsed {
+    ELAPSED_TIME=$(expr ${SECONDS} - ${START_TIME})
+    echo "Elapsed time=$( expr $ELAPSED_TIME / 60 ):$( expr $ELAPSED_TIME % 60 )\n"
+}
 # Consider downloading and installing latest ddev-live-client and using it.
 
-#ddev-live auth --default-org=${DEFAULT_ORG}
+START_TIME=${SECONDS}
 
 echo "Creating site ${SITENAME}"
-ddev-live create site drupal ${SITENAME} --github-repo=${GITHUB_REPO} --run-composer-install --docroot web
+time ddev-live create site drupal ${SITENAME} --github-repo=${GITHUB_REPO} --run-composer-install --docroot web
 #ddev-live create site drupal ${SITENAME} --github-repo=${GITHUB_REPO} --drupal-version 7 --branch 7.x
+elapsed
 
-./wait_site_healthy.sh ${SITENAME}
+time ./wait_site_healthy.sh ${SITENAME}
 echo -ne '\007' >&2
+elapsed
 echo
 
 url=$(ddev-live describe site ${SITENAME} -o json | jq -r .previewUrl)
-./wait_curl_healthy.sh $url
+time ./wait_curl_healthy.sh $url
+elapsed
 
-pushd assets/${SITE_BASENAME}
-ddev-live push files ${SITENAME} . >/tmp/filespush.${SITENAME} 2>&1
-popd
+time ddev-live push files ${SITENAME} assets/${SITE_BASENAME} >/tmp/filespush.${SITENAME} 2>&1
 
-ddev-live push db ${SITENAME} assets/${SITE_BASENAME}.sql.gz
+time ddev-live push db ${SITENAME} assets/${SITE_BASENAME}.sql.gz
 
-ddev-live exec ${SITENAME} -- drush uli
+time ddev-live exec ${SITENAME} -- drush uli
 
-echo "It all seems to have worked out OK"
+set +x
+echo "It all seems to have worked out OK: ${url}"
+elapsed
 #ddev-live delete site ${SITENAME}
 # Add curls here to wait for it to come up and check some content.
