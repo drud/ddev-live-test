@@ -48,7 +48,7 @@ url=$(ddev-live describe site ${SITENAME} -o json | jq -r .previewUrl)
 ./wait_curl_healthy.sh $url
 
 pushd assets/${SITE_BASENAME}
-ddev-live push files ${SITENAME} web/sites/default/files >/dev/null
+ddev-live push files ${SITENAME} . >/tmp/filespush.${SITENAME} 2>&1
 popd
 
 ddev-live push db ${SITENAME} assets/${SITE_BASENAME}.sql.gz
