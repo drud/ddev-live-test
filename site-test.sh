@@ -15,7 +15,6 @@
 set -o errexit
 set -o pipefail
 set -o nounset
-set -x
 
 # We'll want to add args later, but for now static configuration
 GITHUB_REPO=rfay/d8composer
@@ -38,6 +37,7 @@ function elapsed {
 START_TIME=${SECONDS}
 
 echo "Creating site ${SITENAME}"
+set -x
 time ddev-live create site drupal ${SITENAME} --github-repo=${GITHUB_REPO} --run-composer-install --docroot web
 #ddev-live create site drupal ${SITENAME} --github-repo=${GITHUB_REPO} --drupal-version 7 --branch 7.x
 elapsed
