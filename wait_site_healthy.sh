@@ -10,9 +10,9 @@ echo "waiting for site ${sitename}: $(date)" >&2
 
 for i in {1000..0}; do
 #  status=$(ddev-live describe site ${sitename} | grep -v "Using org: " | jq -r .status.conditions[1].status)
-  status=$(ddev-live describe site ${sitename} | grep -v "Using org: " | jq -r .status.webStatus )
+  previewUrl=$(ddev-live describe site ${sitename}  -o json | jq -r .previewUrl )
 
-  if [ "${status}" != '{}' ]; then
+  if [ "${previewUrl}" != "" ]; then
     echo "Site ${sitename} seems to have become ready at $(date) \007" >&2
     exit 0
   fi

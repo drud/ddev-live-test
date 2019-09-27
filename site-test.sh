@@ -34,7 +34,7 @@ trap cleanup EXIT
 
 # Consider downloading and installing latest ddev-live-client and using it.
 
-ddev-live auth --default-org=${DEFAULT_ORG}
+#ddev-live auth --default-org=${DEFAULT_ORG}
 
 echo "Creating site ${SITENAME}"
 ddev-live create site drupal ${SITENAME} --github-repo=${GITHUB_REPO} --run-composer-install --docroot web
@@ -44,12 +44,11 @@ ddev-live create site drupal ${SITENAME} --github-repo=${GITHUB_REPO} --run-comp
 echo -ne '\007' >&2
 echo
 
-ddev-live describe site ${SITENAME} | grep -v "Using org" | jq -r .status
-url=$(ddev-live describe site ${SITENAME} | grep -v "Using org" | jq -r .status.webStatus.urls[0])
+url=$(ddev-live describe site ${SITENAME} -o json | jq -r .previewUrl)
 ./wait_curl_healthy.sh $url
 
 pushd assets/${SITE_BASENAME}
-ddev-live push files ${SITENAME} . >/dev/null
+ddev-live push files ${SITENAME} web/sites/default/files >/dev/null
 popd
 
 ddev-live push db ${SITENAME} assets/${SITE_BASENAME}.sql.gz
