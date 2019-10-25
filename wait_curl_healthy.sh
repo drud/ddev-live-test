@@ -17,5 +17,5 @@ for i in {1000..0}; do
   sleep 10
 done
 
-echo "\nurl ${url} never became ready, giving up at $(date) \007" >&2
+printf "\nurl ${url} never became ready, giving up at $(date) \007\n" >&2
 exit 2

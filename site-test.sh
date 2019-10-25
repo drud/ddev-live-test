@@ -21,16 +21,15 @@ GITHUB_REPO=rfay/d8composer
 SITE_BASENAME=d8composer
 SITENAME="${SITE_BASENAME}-$(date +%Y%m%d%H%M)"
 DEFAULT_ORG=randy
+TIMEFORMAT='Cmd time: %0lR'
 
 function cleanup {
-    set +x
-    echo "This would do cleanup actions including 'ddev-live delete site ${SITENAME}' at this point"
-    #ddev-live delete site ${SITENAME}
+    printf "Completion status is $?\n"
 }
 trap cleanup EXIT
 function elapsed {
     ELAPSED_TIME=$(expr ${SECONDS} - ${START_TIME})
-    echo "Elapsed time=$( expr $ELAPSED_TIME / 60 ):$( expr $ELAPSED_TIME % 60 )\n"
+    printf "Elapsed time=$( expr $ELAPSED_TIME / 60 ):$( expr $ELAPSED_TIME % 60 )\n"
 }
 # Consider downloading and installing latest ddev-live-client and using it.
 
@@ -42,6 +41,7 @@ ddev-live auth
 set -x
 time ddev-live create site drupal ${SITENAME} --github-repo=${GITHUB_REPO} --run-composer-install --docroot web
 #ddev-live create site drupal ${SITENAME} --github-repo=${GITHUB_REPO} --drupal-version 7 --branch 7.x
+set +x
 elapsed
 
 time ./wait_site_healthy.sh ${SITENAME}
@@ -53,14 +53,12 @@ url=$(ddev-live describe site ${SITENAME} -o json | jq -r .previewUrl)
 time ./wait_curl_healthy.sh $url
 elapsed
 
+set -x
 time ddev-live push files ${SITENAME} assets/${SITE_BASENAME} >/tmp/filespush.${SITENAME} 2>&1
-
 time ddev-live push db ${SITENAME} assets/${SITE_BASENAME}.sql.gz
-
 time ddev-live exec ${SITENAME} -- drush uli
-
 set +x
-echo "It all seems to have worked out OK: ${url}"
+
+printf "It all seems to have worked out OK: ${url}\n"
 elapsed
-#ddev-live delete site ${SITENAME}
 # Add curls here to wait for it to come up and check some content.

@@ -13,12 +13,12 @@ for i in {1000..0}; do
   previewUrl=$(ddev-live describe site ${sitename}  -o json | jq -r .previewUrl )
 
   if [ "${previewUrl}" != "" ]; then
-    echo "Site ${sitename} seems to have become ready at $(date) \007" >&2
+    printf "\nSite ${sitename} seems to have become ready at $(date) \007\n" >&2
     exit 0
   fi
   printf "." >&2
   sleep 10
 done
 
-echo "\nsite ${sitename} never became ready, giving up at $(date) \007" >&2
+printf "\nsite ${sitename} never became ready, giving up at $(date) \007\n" >&2
 exit 2
