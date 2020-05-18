@@ -54,9 +54,10 @@ time ./wait_curl_healthy.sh $url
 elapsed
 
 set -x
-time ddev-live push files ${SITENAME} assets/${SITE_BASENAME} >/tmp/filespush.${SITENAME} 2>&1
 time ddev-live push db ${SITENAME} assets/${SITE_BASENAME}.sql.gz
-time ddev-live exec ${SITENAME} -- drush uli
+time ddev-live push files ${SITENAME} assets/${SITE_BASENAME} >/tmp/filespush.${SITENAME} 2>&1
+
+time ddev-live exec ${SITENAME} -- drush uli -l ${url#http://preview-}
 set +x
 
 printf "It all seems to have worked out OK: ${url}\n"
